@@ -43,7 +43,10 @@ jobs:
           done
           (cd dist && sha256sum sni-firewall-* > SHA256SUMS)
 
-      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+      # Attestations in private repositories need GitHub Enterprise Cloud; a
+      # private repository on another plan would fail the release here.
+      - if: ${{ !github.event.repository.private }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: dist/sni-firewall-*
 
