@@ -42,6 +42,9 @@ import (
 	"time"
 )
 
+// Set at build time with -ldflags "-X main.version=<version>".
+var version = "dev"
+
 // TLSErrorCode represents a TLS alert code value
 type TLSErrorCode byte
 
@@ -108,7 +111,13 @@ func main() {
 	defaultAction := flag.String("default", "", "Default action (allow/deny) for unlisted domains")
 	verifyFlag := flag.Bool("verify", false, "Verify server certificates match SNI, and plaintext HTTP destinations match Host")
 	httpPort := flag.String("http-port", "", "Local port for plaintext HTTP filtered by Host header (disabled when empty)")
+	showVersion := flag.Bool("version", false, "Print the version and exit")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println(version)
+		return
+	}
 
 	// Check if required arguments are provided
 	if *domainFile == "" {

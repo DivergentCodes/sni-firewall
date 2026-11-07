@@ -80,6 +80,20 @@ falls back to TCP.
 - Only the first request on a keep-alive HTTP connection is checked.
 - The domain list is read once at startup.
 
+## Releases
+
+Pushing a `vX.Y.Z` tag publishes Linux amd64 and arm64 binaries, a
+`SHA256SUMS` file, and a build provenance attestation for each binary.
+
+```sh
+VERSION=v0.1.0
+ARCH=amd64
+gh release download "$VERSION" --repo DivergentCodes/sni-firewall \
+  --pattern "sni-firewall-${VERSION}-linux-${ARCH}" --pattern SHA256SUMS
+sha256sum --check --ignore-missing SHA256SUMS
+gh attestation verify "sni-firewall-${VERSION}-linux-${ARCH}" --repo DivergentCodes/sni-firewall
+```
+
 ## Development
 
 ```sh
@@ -87,7 +101,8 @@ make lint test build
 ```
 
 CI runs `golangci-lint`, `go vet`, `go test -race`, Linux builds for amd64 and
-arm64, and `govulncheck` on every pull request.
+arm64, and `govulncheck` on every pull request. `make build` stamps the version
+from `git describe`; `--version` prints it.
 
 ## License
 
