@@ -91,7 +91,10 @@ falls back to TCP.
 ## Releases
 
 Pushing a `vX.Y.Z` tag publishes Linux amd64 and arm64 binaries, a
-`SHA256SUMS` file, and a build provenance attestation for each binary.
+`SHA256SUMS` file, and, while the repository is public, a build provenance
+attestation for each binary. GitHub only offers attestations for private
+repositories on Enterprise Cloud, so a private release carries checksums alone
+and the `gh attestation verify` step does not apply.
 
 ```sh
 VERSION=v0.1.0
