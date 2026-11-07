@@ -1,17 +1,19 @@
 BINARY  := sni-firewall
 PKG     := ./cmd/sni-firewall
 DIST    := dist
+VERSION ?= $(shell git describe --tags --always --dirty)
+LDFLAGS := -s -w -X main.version=$(VERSION)
 
 .PHONY: all build build-linux test lint vet fmt clean
 
 all: lint test build
 
 build:
-	go build -trimpath -o $(DIST)/$(BINARY) $(PKG)
+	go build -trimpath -ldflags "$(LDFLAGS)" -o $(DIST)/$(BINARY) $(PKG)
 
 build-linux:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -o $(DIST)/$(BINARY)-linux-amd64 $(PKG)
-	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -trimpath -o $(DIST)/$(BINARY)-linux-arm64 $(PKG)
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o $(DIST)/$(BINARY)-linux-amd64 $(PKG)
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o $(DIST)/$(BINARY)-linux-arm64 $(PKG)
 
 test:
 	go test -race -count=1 ./...
