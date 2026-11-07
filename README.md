@@ -55,6 +55,13 @@ make build
 A domain matches exactly. A leading dot, as in `.github.com`, matches any
 subdomain but not `github.com` itself.
 
+Send `SIGHUP` to reload the domain list from the same path. If the file cannot
+be read, the current list stays in force and the failure is logged.
+
+```sh
+kill -HUP "$(pidof sni-firewall)"
+```
+
 ### Redirecting traffic
 
 On the routing host:
@@ -78,7 +85,8 @@ falls back to TCP.
 - Domain fronting through an allowed CDN is not detectable without decryption.
 - Only IPv4 original destinations are supported.
 - Only the first request on a keep-alive HTTP connection is checked.
-- The domain list is read once at startup.
+- A reload applies to new connections only. Connections already relayed stay
+  open even if the new list would block them.
 
 ## Development
 

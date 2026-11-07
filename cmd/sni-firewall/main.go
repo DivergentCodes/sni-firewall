@@ -35,6 +35,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -133,6 +134,11 @@ func main() {
 	if err := loadDomainList(*domainFile); err != nil {
 		log.Fatalf("Failed to load domain list: %v", err)
 	}
+
+	// Reload the domain list on SIGHUP without dropping connections
+	reloadSignals := make(chan os.Signal, 1)
+	signal.Notify(reloadSignals, syscall.SIGHUP)
+	go reloadDomainList(*domainFile, reloadSignals, nil)
 
 	listener, err := net.Listen("tcp", ":"+*listenPort)
 	if err != nil {
